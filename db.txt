@@ -1,0 +1,13 @@
+// table reqs
+
+clients:
+    id
+    credit_line
+    balance
+
+transactions:
+    id
+    value
+    type
+    description
+    processed_at
