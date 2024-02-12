@@ -26,7 +26,7 @@ public class Command
     {
         if (string.IsNullOrEmpty(loops) || string.IsNullOrWhiteSpace(loops)) throw new ArgumentException("Loops should be pass!");
         try {
-            Loops = int.Parse(loops);
+            Loops = int.Parse(loops) + 1;
         }
         catch (Exception)
         {
