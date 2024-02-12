@@ -1,4 +1,3 @@
-using Core;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,11 +5,11 @@ namespace Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class RootController : ControllerBase
+public class ClienteController : ControllerBase
 {
     private readonly IConsoleApp ConsoleApp;
 
-    public RootController(IConsoleApp consoleApp)
+    public ClienteController(IConsoleApp consoleApp)
     {
         ConsoleApp = consoleApp;
     }
