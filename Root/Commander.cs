@@ -17,6 +17,8 @@ public class Commander
     {
         var builder = new StringBuilder();
         builder.AppendLine("Command type: " + Command.Type);
+        builder.AppendLine("UserId: " + Command.UserId);
+        builder.AppendLine("Loops: " + Command.Loops);
         return builder.ToString();
     }
 }
