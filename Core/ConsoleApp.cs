@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Context;
 using Core.Interfaces;
 using Enums;
@@ -8,7 +7,7 @@ namespace Core;
 
 public class ConsoleApp : IConsoleApp
 {
-    public async void Run(string[] args)
+    public async Task Run(string[] args)
     {
         try
         {
@@ -56,6 +55,10 @@ public class ConsoleApp : IConsoleApp
         {
             Console.WriteLine("Wrong usage format. Missing parameter flag");
             Initializer.Help();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("General error happens, reason: " + ex.Message);
         }
     }
 }

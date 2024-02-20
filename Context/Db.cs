@@ -48,6 +48,10 @@ public class Db
         {
             Console.WriteLine("[ERROR] Try to get client. Reason: " + e.Message);
         }
+        catch (Exception e)
+        {
+            Console.WriteLine("[ERROR] From mysql, the reason is: " + e.Message);
+        }
         finally
         {
             await Connection.CloseAsync();
