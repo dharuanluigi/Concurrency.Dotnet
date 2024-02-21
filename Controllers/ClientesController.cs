@@ -1,6 +1,9 @@
-using Core.Interfaces;
+using System.Net;
+using Context;
 using DTO;
 using Microsoft.AspNetCore.Mvc;
+using Models;
+using Org.BouncyCastle.Security;
 
 namespace Controllers;
 
@@ -8,20 +11,42 @@ namespace Controllers;
 [Route("[controller]")]
 public class ClientesController : ControllerBase
 {
-    private readonly IConsoleApp ConsoleApp;
+    private readonly IClientContext _clientContext;
 
-    public ClientesController(IConsoleApp consoleApp)
+    public ClientesController(IClientContext clientContext)
     {
-        ConsoleApp = consoleApp;
+        _clientContext = clientContext;
     }
 
     [HttpPost("{id}/transacoes")]
-    public IActionResult GetAsync([FromRoute] int id, [FromBody] DoTransactionDTO doTransactionDTO)
+    public async Task<IActionResult> GetAsync([FromRoute] int id, [FromBody] DoTransactionDTO doTransactionDTO)
     {
-        // var args = new[] {"app.dll", "-a", "-i", "4", "-l", "2"};
+        try
+        {
+            var customer = await _clientContext.GetByIdAsync(id);
 
-        // ConsoleApp.Run(args);
+            if (customer == null)
+            {
+                return NotFound();
+            }
 
-        return NoContent();
+            customer.Withdraw(doTransactionDTO.Valor);
+
+            var transaction = new Transaction(customer, doTransactionDTO.Valor, doTransactionDTO.Tipo, doTransactionDTO.Descricao);
+
+            await _clientContext.DoTransactionAsync(transaction);
+            await _clientContext.UpdateCustomerBalanceAsync(customer);
+
+            return Ok(new CustomerReport(customer.Limit, customer.Balance));
+        }
+        catch (InvalidParameterException ex)
+        {
+            return UnprocessableEntity(new ApiResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("[GENERAL ERROR] What is this: " + ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

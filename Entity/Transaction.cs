@@ -1,3 +1,5 @@
+using Entity;
+
 namespace Models;
 
 public class Transaction
@@ -10,11 +12,21 @@ public class Transaction
 
     public int ClientId { get; set; }
 
+    public Customer? Customer { get; set; }
+
     public Transaction(int value, char type, string description, int clientId)
     {
         Value = value;
         Type = type;
         Description = description;
         ClientId = clientId;
+    }
+
+    public Transaction(Customer customer, int value, char type, string description)
+    {
+        Customer = customer;
+        Value = value;
+        Type = type;
+        Description = description;
     }
 }
