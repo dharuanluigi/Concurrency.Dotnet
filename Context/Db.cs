@@ -1,4 +1,5 @@
 using System.Data;
+using Entity;
 using Models;
 using MySql.Data.MySqlClient;
 

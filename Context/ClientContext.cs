@@ -59,7 +59,7 @@ public class ClientContext : IClientContext
         return default;
     }
 
-    public async Task DoTransactionAsync(Transaction transaction)
+    public async Task DoTransactionAsync(Entity.Transaction transaction)
     {
         try
         {   // INSERT INTO transactions VALUES(NULL, 0, 'x', 'x', 'x', 0);
@@ -112,5 +112,52 @@ public class ClientContext : IClientContext
         {
             await _connection.CloseAsync();
         }
+    }
+
+    public async Task<Extract?> GetLastExtractsByClientId(int id)
+    {
+        try
+        {
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT c.c_limit, c.balance, t.t_value, t.t_type, t.t_desc, t.process_at FROM clients c INNER JOIN transactions t ON c.id = t.client_id WHERE c.id = @id ORDER BY t.process_at DESC LIMIT 10;";
+            _command.Parameters.AddWithValue("@id", id);
+
+            int i = 0;
+            var total = 0;
+            var limit = 0;
+
+            var listOfTransactions = new List<Transacao>();
+
+            await _connection.OpenAsync();
+            using var reader = await _command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                if (i != 0)
+                {
+                    listOfTransactions.Add(new Transacao(reader.GetInt32("t_value"), reader.GetChar("t_type"), reader.GetString("t_desc"), reader.GetDateTime("process_at")));
+                }
+                else
+                {
+                    total = reader.GetInt32("balance");
+                    limit = reader.GetInt32("c_limit");
+                    i = 1;
+                    listOfTransactions.Add(new Transacao(reader.GetInt32("t_value"), reader.GetChar("t_type"), reader.GetString("t_desc"), reader.GetDateTime("process_at")));
+                }
+
+            }
+            await _connection.CloseAsync();
+
+            return new Extract(new Balance(total, DateTime.UtcNow.ToString(), limit), listOfTransactions);
+        }
+        catch(MySqlException ex)
+        {
+            Console.WriteLine("[Error] Trying to get client extracts, error reason: " + ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return default;
     }
 }

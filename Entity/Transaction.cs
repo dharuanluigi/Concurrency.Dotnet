@@ -1,6 +1,6 @@
 using Entity;
 
-namespace Models;
+namespace Entity;
 
 public class Transaction
 {

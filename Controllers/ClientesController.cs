@@ -1,4 +1,3 @@
-using System.Net;
 using Context;
 using DTO;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ public class ClientesController : ControllerBase
     }
 
     [HttpPost("{id}/transacoes")]
-    public async Task<IActionResult> GetAsync([FromRoute] int id, [FromBody] DoTransactionDTO doTransactionDTO)
+    public async Task<IActionResult> MakeTransactionAsync([FromRoute] int id, [FromBody] DoTransactionDTO doTransactionDTO)
     {
         try
         {
@@ -32,7 +31,7 @@ public class ClientesController : ControllerBase
 
             customer.Withdraw(doTransactionDTO.Valor);
 
-            var transaction = new Transaction(customer, doTransactionDTO.Valor, doTransactionDTO.Tipo, doTransactionDTO.Descricao);
+            var transaction = new Entity.Transaction(customer, doTransactionDTO.Valor, doTransactionDTO.Tipo, doTransactionDTO.Descricao);
 
             await _clientContext.DoTransactionAsync(transaction);
             await _clientContext.UpdateCustomerBalanceAsync(customer);
@@ -48,5 +47,20 @@ public class ClientesController : ControllerBase
             Console.WriteLine("[GENERAL ERROR] What is this: " + ex.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+
+    [HttpGet("{id}/extrato")]
+    public async Task<IActionResult> GetExtractAsync([FromRoute] int id)
+    {
+        var customer = await _clientContext.GetByIdAsync(id);
+
+        if (customer == null)
+        {
+            return NotFound();
+        }
+
+        var lastExtracts = await _clientContext.GetLastExtractsByClientId(customer.Id);
+
+        return Ok(lastExtracts);
     }
 }

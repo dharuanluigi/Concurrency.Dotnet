@@ -1,5 +1,4 @@
 using Entity;
-using Models;
 
 namespace Context;
 
@@ -10,4 +9,6 @@ public interface IClientContext
     Task DoTransactionAsync(Transaction transaction);
 
     Task UpdateCustomerBalanceAsync(Customer customer);
+
+    Task<Extract?> GetLastExtractsByClientId(int id);
 }
