@@ -1,8 +1,8 @@
-﻿using Core;
-using Core.Interfaces;
+﻿using Context;
+using Core;
 
 // if -c is informed, then console mode is used
-if (args[0] == "-c")
+if (args.Length > 0 && args[0] == "-c")
 {
     var console = new ConsoleApp();
     await console.Run(args);
@@ -10,7 +10,7 @@ if (args[0] == "-c")
 else
 {
     var builder = WebApplication.CreateBuilder(args);
-    builder.Services.AddSingleton<IConsoleApp, ConsoleApp>();
+    builder.Services.AddSingleton<IClientContext, ClientContext>();
 
     builder.Services.AddControllers();
 
