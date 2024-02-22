@@ -1,0 +1,9 @@
+.vscode
+bin
+obj
+.gitignore
+gitignore
+db.sql
+db.txt
+Dockerfile
+LICENSE
