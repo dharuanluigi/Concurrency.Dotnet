@@ -5,7 +5,8 @@ RUN dotnet restore -r linux-x64
 COPY . .
 RUN dotnet publish -c Release -o out
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.27-jammy-chiseled
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.27-jammy-chiseled
 WORKDIR /app
+ENV ASPNETCORE_URLS http://*:9999
 COPY --from=builder /build/out .
 ENTRYPOINT [ "/app/Concurrency.Dotnet" ]
