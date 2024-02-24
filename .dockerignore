@@ -7,3 +7,4 @@ db.sql
 db.txt
 Dockerfile
 LICENSE
+docker-compose.yml

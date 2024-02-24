@@ -8,7 +8,6 @@ namespace Context;
 
 public class ClientContext : IClientContext
 {
-    private readonly string _connectionString = "server=localhost;uid=root;pwd=Brasil123;database=tft;sslmode=none;";
 
     private readonly MySqlCommand _command;
 
@@ -16,7 +15,7 @@ public class ClientContext : IClientContext
 
     public ClientContext()
     {
-        _connection = new MySqlConnection(_connectionString);
+        _connection = new MySqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
         _command = new MySqlCommand()
         {
             Connection = _connection

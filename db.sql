@@ -22,11 +22,3 @@ INSERT INTO clients VALUES(NULL, 80000, 0);
 INSERT INTO clients VALUES(NULL, 1000000, 0);
 INSERT INTO clients VALUES(NULL, 10000000, 0);
 INSERT INTO clients VALUES(NULL, 500000, 0);
-
--- insert transactions
-INSERT INTO transactions VALUES(NULL, 0, 'x', 'x', 'x', 0);
-
--- updating client balance
-UPDATE clients
-SET balance = 0
-WHERE id = 0;

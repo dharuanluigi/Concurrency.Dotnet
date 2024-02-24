@@ -1,0 +1,55 @@
+version: '3.5'
+
+services:
+  db:
+    image: mysql:5.7.20
+    hostname: db
+    environment:
+      - MYSQL_DATABASE=tft
+      - MYSQL_ROOT_PASSWORD=Brasil123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/01-db.sql:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256MB'
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api01
+      - api02
+    ports:
+      - "9999:9999"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: '10MB'
+
+  api01: &api
+    image: dharuan/r24q1:latest
+    hostname: api01
+    environment:
+      - ASPNETCORE_URLS=http://*:9998
+      - CONNECTION_STRING=server=db;uid=root;pwd=Brasil123;database=tft;sslmode=none;
+    ports:
+      - "9998:9999"
+    depends_on:
+      - db
+    deploy:
+      resources:
+        limits:
+          cpus: "0.55"
+          memory: "200MB"
+  
+  api02:
+    <<: *api
+    hostname: api02
+    ports:
+      - "9997:9999"
