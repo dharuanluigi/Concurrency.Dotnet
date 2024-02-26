@@ -35,9 +35,9 @@ services:
   api01: &api
     image: dharuan/r24q1:latest
     hostname: api01
-    environment:
-      - ASPNETCORE_URLS=http://*:9998
-      - CONNECTION_STRING=server=db;uid=root;pwd=Brasil123;database=tft;sslmode=none;
+    environment: &env
+      CONNECTION_STRING: server=db;uid=root;pwd=Brasil123;database=tft;sslmode=none;
+      ASPNETCORE_URLS: http://*:9998
     ports:
       - "9998:9999"
     depends_on:
@@ -46,10 +46,13 @@ services:
       resources:
         limits:
           cpus: "0.85"
-          memory: "284MB"
+          memory: "128MB"
   
   api02:
     <<: *api
     hostname: api02
+    environment:
+      <<: *env
+      ASPNETCORE_URLS: http://*:9997
     ports:
       - "9997:9999"
