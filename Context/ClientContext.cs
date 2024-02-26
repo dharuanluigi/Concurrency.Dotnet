@@ -15,7 +15,8 @@ public class ClientContext : IClientContext
 
     public ClientContext()
     {
-        _connection = new MySqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+        var conn = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "server=localhost;uid=root;pwd=Brasil123;database=tft;sslmode=none;";
+        _connection = new MySqlConnection(conn);
         _command = new MySqlCommand()
         {
             Connection = _connection
