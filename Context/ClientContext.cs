@@ -61,7 +61,7 @@ public class ClientContext : IClientContext
     public async Task DoTransactionAsync(Entity.Transaction transaction)
     {
         try
-        {   // INSERT INTO transactions VALUES(NULL, 0, 'x', 'x', 'x', 0);
+        {
 
             if (transaction.Customer != null)
             {

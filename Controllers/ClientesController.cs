@@ -52,15 +52,23 @@ public class ClientesController : ControllerBase
     [HttpGet("{id}/extrato")]
     public async Task<IActionResult> GetExtractAsync([FromRoute] int id)
     {
-        var customer = await _clientContext.GetByIdAsync(id);
-
-        if (customer == null)
+        try
         {
-            return NotFound();
+            var customer = await _clientContext.GetByIdAsync(id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            var lastExtracts = await _clientContext.GetLastExtractsByClientId(customer.Id);
+
+            return Ok(lastExtracts);
         }
-
-        var lastExtracts = await _clientContext.GetLastExtractsByClientId(customer.Id);
-
-        return Ok(lastExtracts);
+        catch (Exception ex)
+        {
+            Console.WriteLine("[GENERAL ERROR] When to try get extracts. Reason: " + ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
