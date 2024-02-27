@@ -143,7 +143,7 @@ public class ClientContext : IClientContext
                 {
                     if (i != 0)
                     {
-                        if (!reader.IsDBNull(reader.GetInt32("t_value")))
+                        if (!reader.IsDBNull(2))
                         {
                             listOfTransactions.Add(new Transacao(reader.GetInt32("t_value"), reader.GetChar("t_type"), reader.GetString("t_desc"), reader.GetDateTime("process_at")));
                         }
