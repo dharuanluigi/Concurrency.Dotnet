@@ -1,7 +1,7 @@
 using Context;
 using DTO;
+using Entity;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Org.BouncyCastle.Security;
 
 namespace Controllers;
@@ -18,11 +18,29 @@ public class ClientesController : ControllerBase
     }
 
     [HttpPost("{id}/transacoes")]
-    public async Task<IActionResult> MakeTransactionAsync([FromRoute] int id, [FromBody] DoTransactionDTO doTransactionDTO)
+    public IActionResult MakeTransactionAsync([FromRoute] int id, [FromBody] DoTransactionDTO doTransactionDTO)
     {
         try
         {
-            var customer = await _clientContext.GetByIdAsync(id);
+
+            if (doTransactionDTO.Tipo != 'd' && doTransactionDTO.Tipo != 'c')
+            {
+                return UnprocessableEntity();
+            }
+
+            if (string.IsNullOrWhiteSpace(doTransactionDTO.Descricao) || doTransactionDTO.Descricao.Length > 10)
+            {
+                return UnprocessableEntity();
+            }
+
+
+            Customer? customer = null;
+            
+            var th = new Thread(() => {
+                customer = _clientContext.GetById(id);
+            });
+            th.Start();
+            th.Join();
 
             if (customer == null)
             {
@@ -31,10 +49,10 @@ public class ClientesController : ControllerBase
 
             customer.Withdraw(doTransactionDTO.Valor);
 
-            var transaction = new Entity.Transaction(customer, doTransactionDTO.Valor, doTransactionDTO.Tipo, doTransactionDTO.Descricao);
+            var transaction = new Transaction(customer, doTransactionDTO.Valor, doTransactionDTO.Tipo, doTransactionDTO.Descricao);
 
-            await _clientContext.DoTransactionAsync(transaction);
-            await _clientContext.UpdateCustomerBalanceAsync(customer);
+            _clientContext.DoTransaction(transaction);
+            _clientContext.UpdateCustomerBalance(customer);
 
             return Ok(new CustomerReport(customer.Limit, customer.Balance));
         }
@@ -50,18 +68,29 @@ public class ClientesController : ControllerBase
     }
 
     [HttpGet("{id}/extrato")]
-    public async Task<IActionResult> GetExtractAsync([FromRoute] int id)
+    public IActionResult GetExtractAsync([FromRoute] int id)
     {
         try
         {
-            var customer = await _clientContext.GetByIdAsync(id);
+            Customer? customer = null;
+            Extract? lastExtracts = null;
+
+            var th = new Thread(() => {
+                customer = _clientContext.GetById(id);
+            });
+            th.Start();
+            th.Join();
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            var lastExtracts = await _clientContext.GetLastExtractsByClientId(customer.Id);
+            var ch = new Thread(() => {
+                lastExtracts = _clientContext.GetLastExtractsByClientId(customer.Id);
+            });
+            ch.Start();
+            ch.Join();
 
             return Ok(lastExtracts);
         }
