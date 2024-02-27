@@ -36,7 +36,7 @@ services:
     image: dharuan/r24q1:latest
     hostname: api01
     environment: &env
-      CONNECTION_STRING: server=db;uid=root;pwd=Brasil123;database=tft;sslmode=none;
+      CONNECTION_STRING: server=db;uid=root;pwd=Brasil123;database=tft;sslmode=none;MaxPoolSize=1000;ConnectionLifeTime=60;UseCompression=true;CacheServerProperties=true;
       ASPNETCORE_URLS: http://*:9998
     ports:
       - "9998:9999"

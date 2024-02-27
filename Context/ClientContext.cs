@@ -13,7 +13,7 @@ public class ClientContext : IClientContext
 
     public ClientContext()
     {
-        var conn = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "server=localhost;uid=root;pwd=Brasil123;database=tft;sslmode=none;";
+        var conn = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "server=localhost;uid=root;pwd=Brasil123;database=tft;sslmode=none;MaxPoolSize=1000;ConnectionLifeTime=60;UseCompression=true;CacheServerProperties=true;";
         _connection = new MySqlConnection(conn);
         _command = new MySqlCommand()
         {
