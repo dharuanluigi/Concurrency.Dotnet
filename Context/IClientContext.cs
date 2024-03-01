@@ -4,11 +4,19 @@ namespace Context;
 
 public interface IClientContext
 {
-    Customer? GetById(int id);
+    Task<Customer?> GetByIdAsync(int id);
 
-    void DoTransaction(Transaction transaction);
+    Customer? GetByIdLock(int id);
 
-    void UpdateCustomerBalance(Customer customer);
+    Task DoTransactionAsync(Transaction transaction);
+    
+    void DoTransactionLock(Transaction transaction);
 
-    Extract? GetLastExtractsByClientId(int id);
+    Task UpdateCustomerBalanceAsync(Customer customer);
+
+    void UpdateCustomerBalanceLock(Customer customer);
+
+    Task<Extract?> GetLastExtractsByClientIdAsync(int id);
+
+    Extract? GetLastExtractsByClientIdLock(int id);
 }

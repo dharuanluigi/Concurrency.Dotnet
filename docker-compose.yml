@@ -4,6 +4,7 @@ services:
   db:
     image: mysql:5.7.20
     hostname: db
+    command: ["--max_connections=1000"]
     environment:
       - MYSQL_DATABASE=tft
       - MYSQL_ROOT_PASSWORD=Brasil123
@@ -36,7 +37,7 @@ services:
     image: dharuan/r24q1:latest
     hostname: api01
     environment: &env
-      CONNECTION_STRING: server=db;uid=root;pwd=Brasil123;database=tft;sslmode=none;MaxPoolSize=1000;ConnectionLifeTime=60;UseCompression=true;CacheServerProperties=true;
+      CONNECTION_STRING: server=db;uid=root;pwd=Brasil123;database=tft;sslmode=none;MaxPoolSize=1000;ConnectionLifeTime=60;CacheServerProperties=true;
       ASPNETCORE_URLS: http://*:9998
     ports:
       - "9998:9999"
